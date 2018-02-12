@@ -26,5 +26,14 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "datastore-core": "^0.4.0",
+    "datastore-fs": "^0.4.2",
+    "ethereumjs-util": "^5.1.4",
+    "interface-datastore": "^0.4.2",
+    "ipfs-mini": "^1.1.2",
+    "ipfs-repo": "^0.18.7"
+  }
 }
