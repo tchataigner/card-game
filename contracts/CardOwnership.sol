@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import './base/CardBase.sol';
 import './base/ERC721.sol';
 
-contract CardOwnership is CardsBase, ERC721 {
+contract CardOwnership is CardBase, ERC721 {
     //  Name and symbol of the non fungible token, as defined in ERC721.
     string public constant name = "CryptoCards";
     string public constant symbol = "CC";
@@ -20,15 +20,14 @@ contract CardOwnership is CardsBase, ERC721 {
     bytes4(keccak256('approve(address,uint256)')) ^
     bytes4(keccak256('transfer(address,uint256)')) ^
     bytes4(keccak256('transferFrom(address,address,uint256)')) ^
-    bytes4(keccak256('tokensOfOwner(address)')) ^
-    bytes4(keccak256('tokenMetadata(uint256,string)'));
+    bytes4(keccak256('tokensOfOwner(address)'));
 
     function supportsInterface(bytes4 _interfaceID) external view returns (bool)
     {
         // DEBUG ONLY
-        require((InterfaceSignature_ERC165 == 0x01ffc9a7) && (InterfaceSignature_ERC721 == 0x9a20483d));
+        //require((InterfaceSignature_ERC165 == 0x01ffc9a7) && (InterfaceSignature_ERC721 == 0x9a20483d));
         //PROD ONLY
-        //return ((_interfaceID == InterfaceSignature_ERC165) || (_interfaceID == InterfaceSignature_ERC721));
+        return ((_interfaceID == InterfaceSignature_ERC165) || (_interfaceID == InterfaceSignature_ERC721));
     }
 
     //  Utility Functions
@@ -63,19 +62,34 @@ contract CardOwnership is CardsBase, ERC721 {
         // Safety check to prevent against an unexpected 0x0 default.
         require(_to != address(0));
         // Disallow transfers to this contract to prevent accidental misuse.
-        // The contract should never own any kitties (except very briefly
-        // after a gen0 cat is created and before it goes on auction).
         require(_to != address(this));
 
-        // You can only send your own cat.
+        // You can only send your own card.
         require(_owns(msg.sender, _tokenId));
 
         // Reassign ownership, clear pending approvals, emit Transfer event.
         _transfer(msg.sender, _to, _tokenId);
     }
 
+    function approve(
+        address _to,
+        uint256 _tokenId
+    )
+    external
+    whenNotPaused
+    {
+        // Only an owner can grant transfer approval.
+        require(_owns(msg.sender, _tokenId));
 
-    //  Transfer Kitty owned by another address
+        // Register the approval (replacing any previous approval).
+        _approve(_tokenId, _to);
+
+        // Emit approval event.
+        Approval(msg.sender, _to, _tokenId);
+    }
+
+
+    //  Transfer Card owned by another address
     function transferFrom(
         address _from,
         address _to,
@@ -127,8 +141,8 @@ contract CardOwnership is CardsBase, ERC721 {
             uint256 totalCards = totalSupply();
             uint256 resultIndex = 0;
 
-            // We count on the fact that all cats have IDs starting at 1 and increasing
-            // sequentially up to the totalCat count.
+            // We count on the fact that all cards have IDs starting at 1 and increasing
+            // sequentially up to the totalCards count.
             uint256 cardID;
 
             for (cardID = 1; cardID <= totalCards; cardID++) {

@@ -18,7 +18,7 @@ contract ERC721 {
     // Optional
     // function name() public view returns (string name);
     // function symbol() public view returns (string symbol);
-    // function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds);
+    function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds);
     // function tokenMetadata(uint256 _tokenId, string _preferredTransport) public view returns (string infoUrl);
 
     // ERC-165 Compatibility (https://github.com/ethereum/EIPs/issues/165)

@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 import './CardAccessControl.sol';
 
-contract CardsBase is CardAccessControl {
+contract CardBase is CardAccessControl {
     //Fired everytime a new card is created.
     event Creation(address owner, uint256 cardID);
 
@@ -36,6 +36,13 @@ contract CardsBase is CardAccessControl {
         // transfer ownership
         cardIndexToOwner[_tokenId] = _to;
 
+        if (_from != address(0)) {
+            ownershipTokenCount[_from]--;
+
+            // clear any previously approved ownership exchange
+            delete cardIndexToApproved[_tokenId];
+        }
+
         // Emit the transfer event.
         Transfer(_from, _to, _tokenId);
     }
@@ -54,8 +61,6 @@ contract CardsBase is CardAccessControl {
             });
         uint256 newCardId = cards.push(_card) - 1;
 
-        // It's probably never going to happen, 4 billion cats is A LOT, but
-        // let's just be 100% sure we never let this happen.
         require(newCardId == uint256(uint32(newCardId)));
 
         // emit the birth event

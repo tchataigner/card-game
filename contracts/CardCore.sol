@@ -1,28 +1,7 @@
 pragma solidity ^0.4.18;
 
-import './CardOwnership.sol';
+import './CardCreation.sol';
 
-contract CardCreation is CardOwnership {
-
-    uint256 public autoGenerationFee = 2 finney;
-
-    function setAutoGenerationFee(uint256 val) external onlyCOO {
-        autoGenerationFee = val;
-    }
-
-    function cardGeneration(address _owner, bytes32 _attributes)
-    external
-    whenNotPaused
-    returns(uint256)
-    {
-
-        // Make the new kitten!
-        uint256 cardId = _createCard(_owner, _attributes);
-
-        // return the new kitten's ID
-        return cardId;
-    }
-}
 
 contract CardCore is CardCreation  {
 
@@ -70,4 +49,5 @@ contract CardCore is CardCreation  {
         // Actually unpause the contract.
         super.unpause();
     }
+
 }
